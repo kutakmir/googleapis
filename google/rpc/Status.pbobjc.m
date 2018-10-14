@@ -16,7 +16,7 @@
 #if GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
  #import <Protobuf/Any.pbobjc.h>
 #else
- #import "google/protobuf/Any.pbobjc.h"
+ #import "Any.pbobjc.h"
 #endif
 
  #import "Status.pbobjc.h"
