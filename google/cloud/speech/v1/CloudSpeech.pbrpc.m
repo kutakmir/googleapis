@@ -1,27 +1,27 @@
 #if !defined(GPB_GRPC_PROTOCOL_ONLY) || !GPB_GRPC_PROTOCOL_ONLY
-#import "CloudSpeech.pbrpc.h"
-#import "CloudSpeech.pbobjc.h"
+#import "google/cloud/speech/v1/CloudSpeech.pbrpc.h"
+#import "google/cloud/speech/v1/CloudSpeech.pbobjc.h"
 #import <ProtoRPC/ProtoRPC.h>
 #import <RxLibrary/GRXWriter+Immediate.h>
 
-#import "Annotations.pbobjc.h"
-#import "Operations.pbobjc.h"
+#import "google/api/Annotations.pbobjc.h"
+#import "google/longrunning/Operations.pbobjc.h"
 #if defined(GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS) && GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
 #import <Protobuf/Any.pbobjc.h>
 #else
-#import "Any.pbobjc.h"
+#import "google/protobuf/Any.pbobjc.h"
 #endif
 #if defined(GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS) && GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
 #import <Protobuf/Duration.pbobjc.h>
 #else
-#import "Duration.pbobjc.h"
+#import "google/protobuf/Duration.pbobjc.h"
 #endif
 #if defined(GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS) && GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
 #import <Protobuf/Timestamp.pbobjc.h>
 #else
-#import "Timestamp.pbobjc.h"
+#import "google/protobuf/Timestamp.pbobjc.h"
 #endif
-#import "Status.pbobjc.h"
+#import "google/rpc/Status.pbobjc.h"
 
 @implementation Speech
 

@@ -4,18 +4,18 @@
 #import <ProtoRPC/ProtoRPC.h>
 #import <RxLibrary/GRXWriter+Immediate.h>
 
-#import "Annotations.pbobjc.h"
+#import "google/api/Annotations.pbobjc.h"
 #if defined(GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS) && GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
 #import <Protobuf/Any.pbobjc.h>
 #else
-#import "Any.pbobjc.h"
+#import "google/protobuf/Any.pbobjc.h"
 #endif
 #if defined(GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS) && GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
 #import <Protobuf/Empty.pbobjc.h>
 #else
-#import "Empty.pbobjc.h"
+#import "google/protobuf/Empty.pbobjc.h"
 #endif
-#import "Status.pbobjc.h"
+#import "google/rpc/Status.pbobjc.h"
 
 @implementation Operations
 

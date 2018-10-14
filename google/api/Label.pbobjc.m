@@ -13,7 +13,7 @@
  #import "GPBProtocolBuffers_RuntimeSupport.h"
 #endif
 
- #import "Label.pbobjc.h"
+ #import "google/api/Label.pbobjc.h"
 // @@protoc_insertion_point(imports)
 
 #pragma clang diagnostic push

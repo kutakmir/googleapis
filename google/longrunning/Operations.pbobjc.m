@@ -17,8 +17,8 @@
  #import <Protobuf/Any.pbobjc.h>
  #import <Protobuf/Empty.pbobjc.h>
 #else
- #import "Any.pbobjc.h"
- #import "Empty.pbobjc.h"
+ #import "google/protobuf/Any.pbobjc.h"
+ #import "google/protobuf/Empty.pbobjc.h"
 #endif
 
  #import "Operations.pbobjc.h"
