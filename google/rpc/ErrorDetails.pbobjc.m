@@ -16,10 +16,10 @@
 #if GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
  #import <Protobuf/Duration.pbobjc.h>
 #else
- #import "google/protobuf/Duration.pbobjc.h"
+ #import "Duration.pbobjc.h"
 #endif
 
- #import "google/rpc/ErrorDetails.pbobjc.h"
+ #import "ErrorDetails.pbobjc.h"
 // @@protoc_insertion_point(imports)
 
 #pragma clang diagnostic push

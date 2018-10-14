@@ -17,13 +17,13 @@
  #import <Protobuf/Any.pbobjc.h>
  #import <Protobuf/Empty.pbobjc.h>
 #else
- #import "google/protobuf/Any.pbobjc.h"
- #import "google/protobuf/Empty.pbobjc.h"
+ #import "Any.pbobjc.h"
+ #import "Empty.pbobjc.h"
 #endif
 
- #import "google/longrunning/Operations.pbobjc.h"
- #import "google/api/Annotations.pbobjc.h"
- #import "google/rpc/Status.pbobjc.h"
+ #import "Operations.pbobjc.h"
+ #import "Annotations.pbobjc.h"
+ #import "Status.pbobjc.h"
 // @@protoc_insertion_point(imports)
 
 #pragma clang diagnostic push

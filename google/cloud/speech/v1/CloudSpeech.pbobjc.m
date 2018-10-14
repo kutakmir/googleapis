@@ -18,15 +18,15 @@
  #import <Protobuf/Duration.pbobjc.h>
  #import <Protobuf/Timestamp.pbobjc.h>
 #else
- #import "google/protobuf/Any.pbobjc.h"
- #import "google/protobuf/Duration.pbobjc.h"
- #import "google/protobuf/Timestamp.pbobjc.h"
+ #import "Any.pbobjc.h"
+ #import "Duration.pbobjc.h"
+ #import "Timestamp.pbobjc.h"
 #endif
 
- #import "google/cloud/speech/v1/CloudSpeech.pbobjc.h"
- #import "google/api/Annotations.pbobjc.h"
- #import "google/longrunning/Operations.pbobjc.h"
- #import "google/rpc/Status.pbobjc.h"
+ #import "CloudSpeech.pbobjc.h"
+ #import "Annotations.pbobjc.h"
+ #import "Operations.pbobjc.h"
+ #import "Status.pbobjc.h"
 // @@protoc_insertion_point(imports)
 
 #pragma clang diagnostic push
