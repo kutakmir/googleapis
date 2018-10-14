@@ -13,12 +13,20 @@
  #import "GPBProtocolBuffers_RuntimeSupport.h"
 #endif
 
-#import <stdatomic.h>
+#if GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
+ #import <Protobuf/Any.pbobjc.h>
+ #import <Protobuf/Duration.pbobjc.h>
+ #import <Protobuf/Timestamp.pbobjc.h>
+#else
+ #import "google/protobuf/Any.pbobjc.h"
+ #import "google/protobuf/Duration.pbobjc.h"
+ #import "google/protobuf/Timestamp.pbobjc.h"
+#endif
 
-#import "google/cloud/speech/v1/CloudSpeech.pbobjc.h"
-#import "google/api/Annotations.pbobjc.h"
-#import "google/longrunning/Operations.pbobjc.h"
-#import "google/rpc/Status.pbobjc.h"
+ #import "google/cloud/speech/v1/CloudSpeech.pbobjc.h"
+ #import "google/api/Annotations.pbobjc.h"
+ #import "google/longrunning/Operations.pbobjc.h"
+ #import "google/rpc/Status.pbobjc.h"
 // @@protoc_insertion_point(imports)
 
 #pragma clang diagnostic push
@@ -417,7 +425,7 @@ void SetRecognitionConfig_Encoding_RawValue(RecognitionConfig *message, int32_t 
 #pragma mark - Enum RecognitionConfig_AudioEncoding
 
 GPBEnumDescriptor *RecognitionConfig_AudioEncoding_EnumDescriptor(void) {
-  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  static GPBEnumDescriptor *descriptor = NULL;
   if (!descriptor) {
     static const char *valueNames =
         "EncodingUnspecified\000Linear16\000Flac\000Mulaw\000"
@@ -438,8 +446,7 @@ GPBEnumDescriptor *RecognitionConfig_AudioEncoding_EnumDescriptor(void) {
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:RecognitionConfig_AudioEncoding_IsValidValue];
-    GPBEnumDescriptor *expected = nil;
-    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
       [worker release];
     }
   }
@@ -802,7 +809,7 @@ void SetStreamingRecognizeResponse_SpeechEventType_RawValue(StreamingRecognizeRe
 #pragma mark - Enum StreamingRecognizeResponse_SpeechEventType
 
 GPBEnumDescriptor *StreamingRecognizeResponse_SpeechEventType_EnumDescriptor(void) {
-  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  static GPBEnumDescriptor *descriptor = NULL;
   if (!descriptor) {
     static const char *valueNames =
         "SpeechEventUnspecified\000EndOfSingleUttera"
@@ -817,8 +824,7 @@ GPBEnumDescriptor *StreamingRecognizeResponse_SpeechEventType_EnumDescriptor(voi
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:StreamingRecognizeResponse_SpeechEventType_IsValidValue];
-    GPBEnumDescriptor *expected = nil;
-    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
       [worker release];
     }
   }

@@ -13,9 +13,7 @@
  #import "GPBProtocolBuffers_RuntimeSupport.h"
 #endif
 
-#import <stdatomic.h>
-
-#import "google/api/Label.pbobjc.h"
+ #import "google/api/Label.pbobjc.h"
 // @@protoc_insertion_point(imports)
 
 #pragma clang diagnostic push
@@ -124,7 +122,7 @@ void SetLabelDescriptor_ValueType_RawValue(LabelDescriptor *message, int32_t val
 #pragma mark - Enum LabelDescriptor_ValueType
 
 GPBEnumDescriptor *LabelDescriptor_ValueType_EnumDescriptor(void) {
-  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  static GPBEnumDescriptor *descriptor = NULL;
   if (!descriptor) {
     static const char *valueNames =
         "String\000Bool\000Int64\000";
@@ -139,8 +137,7 @@ GPBEnumDescriptor *LabelDescriptor_ValueType_EnumDescriptor(void) {
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:LabelDescriptor_ValueType_IsValidValue];
-    GPBEnumDescriptor *expected = nil;
-    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
       [worker release];
     }
   }

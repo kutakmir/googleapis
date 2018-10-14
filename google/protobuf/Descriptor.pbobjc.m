@@ -13,9 +13,7 @@
  #import "GPBProtocolBuffers_RuntimeSupport.h"
 #endif
 
-#import <stdatomic.h>
-
-#import "google/protobuf/Descriptor.pbobjc.h"
+ #import "google/protobuf/Descriptor.pbobjc.h"
 // @@protoc_insertion_point(imports)
 
 #pragma clang diagnostic push
@@ -659,7 +657,7 @@ typedef struct GPBFieldDescriptorProto__storage_ {
 #pragma mark - Enum GPBFieldDescriptorProto_Type
 
 GPBEnumDescriptor *GPBFieldDescriptorProto_Type_EnumDescriptor(void) {
-  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  static GPBEnumDescriptor *descriptor = NULL;
   if (!descriptor) {
     static const char *valueNames =
         "TypeDouble\000TypeFloat\000TypeInt64\000TypeUint6"
@@ -693,8 +691,7 @@ GPBEnumDescriptor *GPBFieldDescriptorProto_Type_EnumDescriptor(void) {
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:GPBFieldDescriptorProto_Type_IsValidValue];
-    GPBEnumDescriptor *expected = nil;
-    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
       [worker release];
     }
   }
@@ -730,7 +727,7 @@ BOOL GPBFieldDescriptorProto_Type_IsValidValue(int32_t value__) {
 #pragma mark - Enum GPBFieldDescriptorProto_Label
 
 GPBEnumDescriptor *GPBFieldDescriptorProto_Label_EnumDescriptor(void) {
-  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  static GPBEnumDescriptor *descriptor = NULL;
   if (!descriptor) {
     static const char *valueNames =
         "LabelOptional\000LabelRequired\000LabelRepeate"
@@ -746,8 +743,7 @@ GPBEnumDescriptor *GPBFieldDescriptorProto_Label_EnumDescriptor(void) {
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:GPBFieldDescriptorProto_Label_IsValidValue];
-    GPBEnumDescriptor *expected = nil;
-    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
       [worker release];
     }
   }
@@ -1311,7 +1307,7 @@ typedef struct GPBFileOptions__storage_ {
 #pragma mark - Enum GPBFileOptions_OptimizeMode
 
 GPBEnumDescriptor *GPBFileOptions_OptimizeMode_EnumDescriptor(void) {
-  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  static GPBEnumDescriptor *descriptor = NULL;
   if (!descriptor) {
     static const char *valueNames =
         "Speed\000CodeSize\000LiteRuntime\000";
@@ -1326,8 +1322,7 @@ GPBEnumDescriptor *GPBFileOptions_OptimizeMode_EnumDescriptor(void) {
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:GPBFileOptions_OptimizeMode_IsValidValue];
-    GPBEnumDescriptor *expected = nil;
-    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
       [worker release];
     }
   }
@@ -1546,7 +1541,7 @@ typedef struct GPBFieldOptions__storage_ {
 #pragma mark - Enum GPBFieldOptions_CType
 
 GPBEnumDescriptor *GPBFieldOptions_CType_EnumDescriptor(void) {
-  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  static GPBEnumDescriptor *descriptor = NULL;
   if (!descriptor) {
     static const char *valueNames =
         "String\000Cord\000StringPiece\000";
@@ -1561,8 +1556,7 @@ GPBEnumDescriptor *GPBFieldOptions_CType_EnumDescriptor(void) {
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:GPBFieldOptions_CType_IsValidValue];
-    GPBEnumDescriptor *expected = nil;
-    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
       [worker release];
     }
   }
@@ -1583,7 +1577,7 @@ BOOL GPBFieldOptions_CType_IsValidValue(int32_t value__) {
 #pragma mark - Enum GPBFieldOptions_JSType
 
 GPBEnumDescriptor *GPBFieldOptions_JSType_EnumDescriptor(void) {
-  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  static GPBEnumDescriptor *descriptor = NULL;
   if (!descriptor) {
     static const char *valueNames =
         "JsNormal\000JsString\000JsNumber\000";
@@ -1598,8 +1592,7 @@ GPBEnumDescriptor *GPBFieldOptions_JSType_EnumDescriptor(void) {
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:GPBFieldOptions_JSType_IsValidValue];
-    GPBEnumDescriptor *expected = nil;
-    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
       [worker release];
     }
   }
