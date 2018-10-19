@@ -1,11 +1,11 @@
 #if !defined(GPB_GRPC_PROTOCOL_ONLY) || !GPB_GRPC_PROTOCOL_ONLY
-#import "google/cloud/speech/v1/CloudSpeech.pbrpc.h"
-#import "google/cloud/speech/v1/CloudSpeech.pbobjc.h"
+#import <googleapis/CloudSpeech.pbrpc.h>
+#import <googleapis/CloudSpeech.pbobjc.h>
 #import <ProtoRPC/ProtoRPC.h>
 #import <RxLibrary/GRXWriter+Immediate.h>
 
-#import "google/api/Annotations.pbobjc.h"
-#import "google/longrunning/Operations.pbobjc.h"
+#import <googleapis/Annotations.pbobjc.h>
+#import <googleapis/Operations.pbobjc.h>
 #if defined(GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS) && GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
 #import <Protobuf/Any.pbobjc.h>
 #else
@@ -21,14 +21,14 @@
 #else
 #import "google/protobuf/Timestamp.pbobjc.h"
 #endif
-#import "google/rpc/Status.pbobjc.h"
+#import <googleapis/Status.pbobjc.h>
 
 @implementation Speech
 
 // Designated initializer
 - (instancetype)initWithHost:(NSString *)host {
   self = [super initWithHost:host
-                 packageName:@"google.cloud.speech.v1"
+                 packageName:@"google.cloud.speech.v1p1beta1"
                  serviceName:@"Speech"];
   return self;
 }

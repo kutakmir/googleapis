@@ -13,7 +13,9 @@
  #import "GPBProtocolBuffers_RuntimeSupport.h"
 #endif
 
- #import "google/rpc/Code.pbobjc.h"
+#import <stdatomic.h>
+
+#import <googleapis/Code.pbobjc.h>
 // @@protoc_insertion_point(imports)
 
 #pragma clang diagnostic push
@@ -31,7 +33,7 @@
 #pragma mark - Enum Code
 
 GPBEnumDescriptor *Code_EnumDescriptor(void) {
-  static GPBEnumDescriptor *descriptor = NULL;
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
   if (!descriptor) {
     static const char *valueNames =
         "Ok\000Cancelled\000Unknown\000InvalidArgument\000Dea"
@@ -65,7 +67,8 @@ GPBEnumDescriptor *Code_EnumDescriptor(void) {
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:Code_IsValidValue];
-    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
       [worker release];
     }
   }

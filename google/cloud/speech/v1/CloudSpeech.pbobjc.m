@@ -13,20 +13,12 @@
  #import "GPBProtocolBuffers_RuntimeSupport.h"
 #endif
 
-#if GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
- #import <Protobuf/Any.pbobjc.h>
- #import <Protobuf/Duration.pbobjc.h>
- #import <Protobuf/Timestamp.pbobjc.h>
-#else
- #import "google/protobuf/Any.pbobjc.h"
- #import "google/protobuf/Duration.pbobjc.h"
- #import "google/protobuf/Timestamp.pbobjc.h"
-#endif
+#import <stdatomic.h>
 
- #import "google/cloud/speech/v1/CloudSpeech.pbobjc.h"
- #import "google/api/Annotations.pbobjc.h"
- #import "google/longrunning/Operations.pbobjc.h"
- #import "google/rpc/Status.pbobjc.h"
+#import <googleapis/CloudSpeech.pbobjc.h>
+#import <googleapis/Annotations.pbobjc.h>
+#import <googleapis/Operations.pbobjc.h>
+#import <googleapis/Status.pbobjc.h>
 // @@protoc_insertion_point(imports)
 
 #pragma clang diagnostic push
@@ -60,7 +52,7 @@ static GPBFileDescriptor *CloudSpeechRoot_FileDescriptor(void) {
   static GPBFileDescriptor *descriptor = NULL;
   if (!descriptor) {
     GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
-    descriptor = [[GPBFileDescriptor alloc] initWithPackage:@"google.cloud.speech.v1"
+    descriptor = [[GPBFileDescriptor alloc] initWithPackage:@"google.cloud.speech.v1p1beta1"
                                                      syntax:GPBFileSyntaxProto3];
   }
   return descriptor;
@@ -309,19 +301,34 @@ typedef struct StreamingRecognitionConfig__storage_ {
 
 @dynamic encoding;
 @dynamic sampleRateHertz;
+@dynamic audioChannelCount;
+@dynamic enableSeparateRecognitionPerChannel;
 @dynamic languageCode;
+@dynamic alternativeLanguageCodesArray, alternativeLanguageCodesArray_Count;
 @dynamic maxAlternatives;
 @dynamic profanityFilter;
 @dynamic speechContextsArray, speechContextsArray_Count;
 @dynamic enableWordTimeOffsets;
+@dynamic enableWordConfidence;
+@dynamic enableAutomaticPunctuation;
+@dynamic enableSpeakerDiarization;
+@dynamic diarizationSpeakerCount;
+@dynamic hasMetadata, metadata;
+@dynamic model;
+@dynamic useEnhanced;
 
 typedef struct RecognitionConfig__storage_ {
   uint32_t _has_storage_[1];
   RecognitionConfig_AudioEncoding encoding;
   int32_t sampleRateHertz;
   int32_t maxAlternatives;
+  int32_t audioChannelCount;
+  int32_t diarizationSpeakerCount;
   NSString *languageCode;
   NSMutableArray *speechContextsArray;
+  RecognitionMetadata *metadata;
+  NSString *model;
+  NSMutableArray *alternativeLanguageCodesArray;
 } RecognitionConfig__storage_;
 
 // This method is threadsafe because it is initially called
@@ -352,7 +359,7 @@ typedef struct RecognitionConfig__storage_ {
         .name = "languageCode",
         .dataTypeSpecific.className = NULL,
         .number = RecognitionConfig_FieldNumber_LanguageCode,
-        .hasIndex = 2,
+        .hasIndex = 5,
         .offset = (uint32_t)offsetof(RecognitionConfig__storage_, languageCode),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
@@ -361,7 +368,7 @@ typedef struct RecognitionConfig__storage_ {
         .name = "maxAlternatives",
         .dataTypeSpecific.className = NULL,
         .number = RecognitionConfig_FieldNumber_MaxAlternatives,
-        .hasIndex = 3,
+        .hasIndex = 6,
         .offset = (uint32_t)offsetof(RecognitionConfig__storage_, maxAlternatives),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeInt32,
@@ -370,8 +377,8 @@ typedef struct RecognitionConfig__storage_ {
         .name = "profanityFilter",
         .dataTypeSpecific.className = NULL,
         .number = RecognitionConfig_FieldNumber_ProfanityFilter,
-        .hasIndex = 4,
-        .offset = 5,  // Stored in _has_storage_ to save space.
+        .hasIndex = 7,
+        .offset = 8,  // Stored in _has_storage_ to save space.
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeBool,
       },
@@ -385,13 +392,103 @@ typedef struct RecognitionConfig__storage_ {
         .dataType = GPBDataTypeMessage,
       },
       {
+        .name = "audioChannelCount",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionConfig_FieldNumber_AudioChannelCount,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(RecognitionConfig__storage_, audioChannelCount),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeInt32,
+      },
+      {
         .name = "enableWordTimeOffsets",
         .dataTypeSpecific.className = NULL,
         .number = RecognitionConfig_FieldNumber_EnableWordTimeOffsets,
-        .hasIndex = 6,
-        .offset = 7,  // Stored in _has_storage_ to save space.
+        .hasIndex = 9,
+        .offset = 10,  // Stored in _has_storage_ to save space.
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "metadata",
+        .dataTypeSpecific.className = GPBStringifySymbol(RecognitionMetadata),
+        .number = RecognitionConfig_FieldNumber_Metadata,
+        .hasIndex = 18,
+        .offset = (uint32_t)offsetof(RecognitionConfig__storage_, metadata),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "enableAutomaticPunctuation",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionConfig_FieldNumber_EnableAutomaticPunctuation,
+        .hasIndex = 13,
+        .offset = 14,  // Stored in _has_storage_ to save space.
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "enableSeparateRecognitionPerChannel",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionConfig_FieldNumber_EnableSeparateRecognitionPerChannel,
+        .hasIndex = 3,
+        .offset = 4,  // Stored in _has_storage_ to save space.
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "model",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionConfig_FieldNumber_Model,
+        .hasIndex = 19,
+        .offset = (uint32_t)offsetof(RecognitionConfig__storage_, model),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "useEnhanced",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionConfig_FieldNumber_UseEnhanced,
+        .hasIndex = 20,
+        .offset = 21,  // Stored in _has_storage_ to save space.
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "enableWordConfidence",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionConfig_FieldNumber_EnableWordConfidence,
+        .hasIndex = 11,
+        .offset = 12,  // Stored in _has_storage_ to save space.
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "enableSpeakerDiarization",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionConfig_FieldNumber_EnableSpeakerDiarization,
+        .hasIndex = 15,
+        .offset = 16,  // Stored in _has_storage_ to save space.
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "diarizationSpeakerCount",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionConfig_FieldNumber_DiarizationSpeakerCount,
+        .hasIndex = 17,
+        .offset = (uint32_t)offsetof(RecognitionConfig__storage_, diarizationSpeakerCount),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeInt32,
+      },
+      {
+        .name = "alternativeLanguageCodesArray",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionConfig_FieldNumber_AlternativeLanguageCodesArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(RecognitionConfig__storage_, alternativeLanguageCodesArray),
+        .flags = GPBFieldRepeated,
+        .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
@@ -425,7 +522,7 @@ void SetRecognitionConfig_Encoding_RawValue(RecognitionConfig *message, int32_t 
 #pragma mark - Enum RecognitionConfig_AudioEncoding
 
 GPBEnumDescriptor *RecognitionConfig_AudioEncoding_EnumDescriptor(void) {
-  static GPBEnumDescriptor *descriptor = NULL;
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
   if (!descriptor) {
     static const char *valueNames =
         "EncodingUnspecified\000Linear16\000Flac\000Mulaw\000"
@@ -446,7 +543,8 @@ GPBEnumDescriptor *RecognitionConfig_AudioEncoding_EnumDescriptor(void) {
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:RecognitionConfig_AudioEncoding_IsValidValue];
-    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
       [worker release];
     }
   }
@@ -463,6 +561,362 @@ BOOL RecognitionConfig_AudioEncoding_IsValidValue(int32_t value__) {
     case RecognitionConfig_AudioEncoding_AmrWb:
     case RecognitionConfig_AudioEncoding_OggOpus:
     case RecognitionConfig_AudioEncoding_SpeexWithHeaderByte:
+      return YES;
+    default:
+      return NO;
+  }
+}
+
+#pragma mark - RecognitionMetadata
+
+@implementation RecognitionMetadata
+
+@dynamic interactionType;
+@dynamic industryNaicsCodeOfAudio;
+@dynamic microphoneDistance;
+@dynamic originalMediaType;
+@dynamic recordingDeviceType;
+@dynamic recordingDeviceName;
+@dynamic originalMimeType;
+@dynamic obfuscatedId;
+@dynamic audioTopic;
+
+typedef struct RecognitionMetadata__storage_ {
+  uint32_t _has_storage_[1];
+  RecognitionMetadata_InteractionType interactionType;
+  uint32_t industryNaicsCodeOfAudio;
+  RecognitionMetadata_MicrophoneDistance microphoneDistance;
+  RecognitionMetadata_OriginalMediaType originalMediaType;
+  RecognitionMetadata_RecordingDeviceType recordingDeviceType;
+  NSString *recordingDeviceName;
+  NSString *originalMimeType;
+  NSString *audioTopic;
+  int64_t obfuscatedId;
+} RecognitionMetadata__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "interactionType",
+        .dataTypeSpecific.enumDescFunc = RecognitionMetadata_InteractionType_EnumDescriptor,
+        .number = RecognitionMetadata_FieldNumber_InteractionType,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(RecognitionMetadata__storage_, interactionType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldHasEnumDescriptor),
+        .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "industryNaicsCodeOfAudio",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionMetadata_FieldNumber_IndustryNaicsCodeOfAudio,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(RecognitionMetadata__storage_, industryNaicsCodeOfAudio),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeUInt32,
+      },
+      {
+        .name = "microphoneDistance",
+        .dataTypeSpecific.enumDescFunc = RecognitionMetadata_MicrophoneDistance_EnumDescriptor,
+        .number = RecognitionMetadata_FieldNumber_MicrophoneDistance,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(RecognitionMetadata__storage_, microphoneDistance),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldHasEnumDescriptor),
+        .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "originalMediaType",
+        .dataTypeSpecific.enumDescFunc = RecognitionMetadata_OriginalMediaType_EnumDescriptor,
+        .number = RecognitionMetadata_FieldNumber_OriginalMediaType,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(RecognitionMetadata__storage_, originalMediaType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldHasEnumDescriptor),
+        .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "recordingDeviceType",
+        .dataTypeSpecific.enumDescFunc = RecognitionMetadata_RecordingDeviceType_EnumDescriptor,
+        .number = RecognitionMetadata_FieldNumber_RecordingDeviceType,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(RecognitionMetadata__storage_, recordingDeviceType),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldHasEnumDescriptor),
+        .dataType = GPBDataTypeEnum,
+      },
+      {
+        .name = "recordingDeviceName",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionMetadata_FieldNumber_RecordingDeviceName,
+        .hasIndex = 5,
+        .offset = (uint32_t)offsetof(RecognitionMetadata__storage_, recordingDeviceName),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "originalMimeType",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionMetadata_FieldNumber_OriginalMimeType,
+        .hasIndex = 6,
+        .offset = (uint32_t)offsetof(RecognitionMetadata__storage_, originalMimeType),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "obfuscatedId",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionMetadata_FieldNumber_ObfuscatedId,
+        .hasIndex = 7,
+        .offset = (uint32_t)offsetof(RecognitionMetadata__storage_, obfuscatedId),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeInt64,
+      },
+      {
+        .name = "audioTopic",
+        .dataTypeSpecific.className = NULL,
+        .number = RecognitionMetadata_FieldNumber_AudioTopic,
+        .hasIndex = 8,
+        .offset = (uint32_t)offsetof(RecognitionMetadata__storage_, audioTopic),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:[RecognitionMetadata class]
+                                     rootClass:[CloudSpeechRoot class]
+                                          file:CloudSpeechRoot_FileDescriptor()
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(RecognitionMetadata__storage_)
+                                         flags:GPBDescriptorInitializationFlag_None];
+    NSAssert(descriptor == nil, @"Startup recursed!");
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+int32_t RecognitionMetadata_InteractionType_RawValue(RecognitionMetadata *message) {
+  GPBDescriptor *descriptor = [RecognitionMetadata descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RecognitionMetadata_FieldNumber_InteractionType];
+  return GPBGetMessageInt32Field(message, field);
+}
+
+void SetRecognitionMetadata_InteractionType_RawValue(RecognitionMetadata *message, int32_t value) {
+  GPBDescriptor *descriptor = [RecognitionMetadata descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RecognitionMetadata_FieldNumber_InteractionType];
+  GPBSetInt32IvarWithFieldInternal(message, field, value, descriptor.file.syntax);
+}
+
+int32_t RecognitionMetadata_MicrophoneDistance_RawValue(RecognitionMetadata *message) {
+  GPBDescriptor *descriptor = [RecognitionMetadata descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RecognitionMetadata_FieldNumber_MicrophoneDistance];
+  return GPBGetMessageInt32Field(message, field);
+}
+
+void SetRecognitionMetadata_MicrophoneDistance_RawValue(RecognitionMetadata *message, int32_t value) {
+  GPBDescriptor *descriptor = [RecognitionMetadata descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RecognitionMetadata_FieldNumber_MicrophoneDistance];
+  GPBSetInt32IvarWithFieldInternal(message, field, value, descriptor.file.syntax);
+}
+
+int32_t RecognitionMetadata_OriginalMediaType_RawValue(RecognitionMetadata *message) {
+  GPBDescriptor *descriptor = [RecognitionMetadata descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RecognitionMetadata_FieldNumber_OriginalMediaType];
+  return GPBGetMessageInt32Field(message, field);
+}
+
+void SetRecognitionMetadata_OriginalMediaType_RawValue(RecognitionMetadata *message, int32_t value) {
+  GPBDescriptor *descriptor = [RecognitionMetadata descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RecognitionMetadata_FieldNumber_OriginalMediaType];
+  GPBSetInt32IvarWithFieldInternal(message, field, value, descriptor.file.syntax);
+}
+
+int32_t RecognitionMetadata_RecordingDeviceType_RawValue(RecognitionMetadata *message) {
+  GPBDescriptor *descriptor = [RecognitionMetadata descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RecognitionMetadata_FieldNumber_RecordingDeviceType];
+  return GPBGetMessageInt32Field(message, field);
+}
+
+void SetRecognitionMetadata_RecordingDeviceType_RawValue(RecognitionMetadata *message, int32_t value) {
+  GPBDescriptor *descriptor = [RecognitionMetadata descriptor];
+  GPBFieldDescriptor *field = [descriptor fieldWithNumber:RecognitionMetadata_FieldNumber_RecordingDeviceType];
+  GPBSetInt32IvarWithFieldInternal(message, field, value, descriptor.file.syntax);
+}
+
+#pragma mark - Enum RecognitionMetadata_InteractionType
+
+GPBEnumDescriptor *RecognitionMetadata_InteractionType_EnumDescriptor(void) {
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  if (!descriptor) {
+    static const char *valueNames =
+        "InteractionTypeUnspecified\000Discussion\000Pr"
+        "esentation\000PhoneCall\000Voicemail\000Professio"
+        "nallyProduced\000VoiceSearch\000VoiceCommand\000D"
+        "ictation\000";
+    static const int32_t values[] = {
+        RecognitionMetadata_InteractionType_InteractionTypeUnspecified,
+        RecognitionMetadata_InteractionType_Discussion,
+        RecognitionMetadata_InteractionType_Presentation,
+        RecognitionMetadata_InteractionType_PhoneCall,
+        RecognitionMetadata_InteractionType_Voicemail,
+        RecognitionMetadata_InteractionType_ProfessionallyProduced,
+        RecognitionMetadata_InteractionType_VoiceSearch,
+        RecognitionMetadata_InteractionType_VoiceCommand,
+        RecognitionMetadata_InteractionType_Dictation,
+    };
+    GPBEnumDescriptor *worker =
+        [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(RecognitionMetadata_InteractionType)
+                                       valueNames:valueNames
+                                           values:values
+                                            count:(uint32_t)(sizeof(values) / sizeof(int32_t))
+                                     enumVerifier:RecognitionMetadata_InteractionType_IsValidValue];
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+      [worker release];
+    }
+  }
+  return descriptor;
+}
+
+BOOL RecognitionMetadata_InteractionType_IsValidValue(int32_t value__) {
+  switch (value__) {
+    case RecognitionMetadata_InteractionType_InteractionTypeUnspecified:
+    case RecognitionMetadata_InteractionType_Discussion:
+    case RecognitionMetadata_InteractionType_Presentation:
+    case RecognitionMetadata_InteractionType_PhoneCall:
+    case RecognitionMetadata_InteractionType_Voicemail:
+    case RecognitionMetadata_InteractionType_ProfessionallyProduced:
+    case RecognitionMetadata_InteractionType_VoiceSearch:
+    case RecognitionMetadata_InteractionType_VoiceCommand:
+    case RecognitionMetadata_InteractionType_Dictation:
+      return YES;
+    default:
+      return NO;
+  }
+}
+
+#pragma mark - Enum RecognitionMetadata_MicrophoneDistance
+
+GPBEnumDescriptor *RecognitionMetadata_MicrophoneDistance_EnumDescriptor(void) {
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  if (!descriptor) {
+    static const char *valueNames =
+        "MicrophoneDistanceUnspecified\000Nearfield\000"
+        "Midfield\000Farfield\000";
+    static const int32_t values[] = {
+        RecognitionMetadata_MicrophoneDistance_MicrophoneDistanceUnspecified,
+        RecognitionMetadata_MicrophoneDistance_Nearfield,
+        RecognitionMetadata_MicrophoneDistance_Midfield,
+        RecognitionMetadata_MicrophoneDistance_Farfield,
+    };
+    GPBEnumDescriptor *worker =
+        [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(RecognitionMetadata_MicrophoneDistance)
+                                       valueNames:valueNames
+                                           values:values
+                                            count:(uint32_t)(sizeof(values) / sizeof(int32_t))
+                                     enumVerifier:RecognitionMetadata_MicrophoneDistance_IsValidValue];
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+      [worker release];
+    }
+  }
+  return descriptor;
+}
+
+BOOL RecognitionMetadata_MicrophoneDistance_IsValidValue(int32_t value__) {
+  switch (value__) {
+    case RecognitionMetadata_MicrophoneDistance_MicrophoneDistanceUnspecified:
+    case RecognitionMetadata_MicrophoneDistance_Nearfield:
+    case RecognitionMetadata_MicrophoneDistance_Midfield:
+    case RecognitionMetadata_MicrophoneDistance_Farfield:
+      return YES;
+    default:
+      return NO;
+  }
+}
+
+#pragma mark - Enum RecognitionMetadata_OriginalMediaType
+
+GPBEnumDescriptor *RecognitionMetadata_OriginalMediaType_EnumDescriptor(void) {
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  if (!descriptor) {
+    static const char *valueNames =
+        "OriginalMediaTypeUnspecified\000Audio\000Video"
+        "\000";
+    static const int32_t values[] = {
+        RecognitionMetadata_OriginalMediaType_OriginalMediaTypeUnspecified,
+        RecognitionMetadata_OriginalMediaType_Audio,
+        RecognitionMetadata_OriginalMediaType_Video,
+    };
+    GPBEnumDescriptor *worker =
+        [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(RecognitionMetadata_OriginalMediaType)
+                                       valueNames:valueNames
+                                           values:values
+                                            count:(uint32_t)(sizeof(values) / sizeof(int32_t))
+                                     enumVerifier:RecognitionMetadata_OriginalMediaType_IsValidValue];
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+      [worker release];
+    }
+  }
+  return descriptor;
+}
+
+BOOL RecognitionMetadata_OriginalMediaType_IsValidValue(int32_t value__) {
+  switch (value__) {
+    case RecognitionMetadata_OriginalMediaType_OriginalMediaTypeUnspecified:
+    case RecognitionMetadata_OriginalMediaType_Audio:
+    case RecognitionMetadata_OriginalMediaType_Video:
+      return YES;
+    default:
+      return NO;
+  }
+}
+
+#pragma mark - Enum RecognitionMetadata_RecordingDeviceType
+
+GPBEnumDescriptor *RecognitionMetadata_RecordingDeviceType_EnumDescriptor(void) {
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
+  if (!descriptor) {
+    static const char *valueNames =
+        "RecordingDeviceTypeUnspecified\000Smartphon"
+        "e\000Pc\000PhoneLine\000Vehicle\000OtherOutdoorDevic"
+        "e\000OtherIndoorDevice\000";
+    static const int32_t values[] = {
+        RecognitionMetadata_RecordingDeviceType_RecordingDeviceTypeUnspecified,
+        RecognitionMetadata_RecordingDeviceType_Smartphone,
+        RecognitionMetadata_RecordingDeviceType_Pc,
+        RecognitionMetadata_RecordingDeviceType_PhoneLine,
+        RecognitionMetadata_RecordingDeviceType_Vehicle,
+        RecognitionMetadata_RecordingDeviceType_OtherOutdoorDevice,
+        RecognitionMetadata_RecordingDeviceType_OtherIndoorDevice,
+    };
+    GPBEnumDescriptor *worker =
+        [GPBEnumDescriptor allocDescriptorForName:GPBNSStringifySymbol(RecognitionMetadata_RecordingDeviceType)
+                                       valueNames:valueNames
+                                           values:values
+                                            count:(uint32_t)(sizeof(values) / sizeof(int32_t))
+                                     enumVerifier:RecognitionMetadata_RecordingDeviceType_IsValidValue];
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
+      [worker release];
+    }
+  }
+  return descriptor;
+}
+
+BOOL RecognitionMetadata_RecordingDeviceType_IsValidValue(int32_t value__) {
+  switch (value__) {
+    case RecognitionMetadata_RecordingDeviceType_RecordingDeviceTypeUnspecified:
+    case RecognitionMetadata_RecordingDeviceType_Smartphone:
+    case RecognitionMetadata_RecordingDeviceType_Pc:
+    case RecognitionMetadata_RecordingDeviceType_PhoneLine:
+    case RecognitionMetadata_RecordingDeviceType_Vehicle:
+    case RecognitionMetadata_RecordingDeviceType_OtherOutdoorDevice:
+    case RecognitionMetadata_RecordingDeviceType_OtherIndoorDevice:
       return YES;
     default:
       return NO;
@@ -809,7 +1263,7 @@ void SetStreamingRecognizeResponse_SpeechEventType_RawValue(StreamingRecognizeRe
 #pragma mark - Enum StreamingRecognizeResponse_SpeechEventType
 
 GPBEnumDescriptor *StreamingRecognizeResponse_SpeechEventType_EnumDescriptor(void) {
-  static GPBEnumDescriptor *descriptor = NULL;
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
   if (!descriptor) {
     static const char *valueNames =
         "SpeechEventUnspecified\000EndOfSingleUttera"
@@ -824,7 +1278,8 @@ GPBEnumDescriptor *StreamingRecognizeResponse_SpeechEventType_EnumDescriptor(voi
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:StreamingRecognizeResponse_SpeechEventType_IsValidValue];
-    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
       [worker release];
     }
   }
@@ -848,11 +1303,15 @@ BOOL StreamingRecognizeResponse_SpeechEventType_IsValidValue(int32_t value__) {
 @dynamic alternativesArray, alternativesArray_Count;
 @dynamic isFinal;
 @dynamic stability;
+@dynamic channelTag;
+@dynamic languageCode;
 
 typedef struct StreamingRecognitionResult__storage_ {
   uint32_t _has_storage_[1];
   float stability;
+  int32_t channelTag;
   NSMutableArray *alternativesArray;
+  NSString *languageCode;
 } StreamingRecognitionResult__storage_;
 
 // This method is threadsafe because it is initially called
@@ -888,6 +1347,24 @@ typedef struct StreamingRecognitionResult__storage_ {
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeFloat,
       },
+      {
+        .name = "channelTag",
+        .dataTypeSpecific.className = NULL,
+        .number = StreamingRecognitionResult_FieldNumber_ChannelTag,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(StreamingRecognitionResult__storage_, channelTag),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeInt32,
+      },
+      {
+        .name = "languageCode",
+        .dataTypeSpecific.className = NULL,
+        .number = StreamingRecognitionResult_FieldNumber_LanguageCode,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(StreamingRecognitionResult__storage_, languageCode),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:[StreamingRecognitionResult class]
@@ -910,10 +1387,14 @@ typedef struct StreamingRecognitionResult__storage_ {
 @implementation SpeechRecognitionResult
 
 @dynamic alternativesArray, alternativesArray_Count;
+@dynamic channelTag;
+@dynamic languageCode;
 
 typedef struct SpeechRecognitionResult__storage_ {
   uint32_t _has_storage_[1];
+  int32_t channelTag;
   NSMutableArray *alternativesArray;
+  NSString *languageCode;
 } SpeechRecognitionResult__storage_;
 
 // This method is threadsafe because it is initially called
@@ -930,6 +1411,24 @@ typedef struct SpeechRecognitionResult__storage_ {
         .offset = (uint32_t)offsetof(SpeechRecognitionResult__storage_, alternativesArray),
         .flags = GPBFieldRepeated,
         .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "channelTag",
+        .dataTypeSpecific.className = NULL,
+        .number = SpeechRecognitionResult_FieldNumber_ChannelTag,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(SpeechRecognitionResult__storage_, channelTag),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeInt32,
+      },
+      {
+        .name = "languageCode",
+        .dataTypeSpecific.className = NULL,
+        .number = SpeechRecognitionResult_FieldNumber_LanguageCode,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(SpeechRecognitionResult__storage_, languageCode),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
       },
     };
     GPBDescriptor *localDescriptor =
@@ -1020,11 +1519,15 @@ typedef struct SpeechRecognitionAlternative__storage_ {
 @dynamic hasStartTime, startTime;
 @dynamic hasEndTime, endTime;
 @dynamic word;
+@dynamic confidence;
+@dynamic speakerTag;
 
 typedef struct WordInfo__storage_ {
   uint32_t _has_storage_[1];
-  GPBTimestamp *startTime;
-  GPBTimestamp *endTime;
+  float confidence;
+  int32_t speakerTag;
+  GPBDuration *startTime;
+  GPBDuration *endTime;
   NSString *word;
 } WordInfo__storage_;
 
@@ -1036,7 +1539,7 @@ typedef struct WordInfo__storage_ {
     static GPBMessageFieldDescription fields[] = {
       {
         .name = "startTime",
-        .dataTypeSpecific.className = GPBStringifySymbol(GPBTimestamp),
+        .dataTypeSpecific.className = GPBStringifySymbol(GPBDuration),
         .number = WordInfo_FieldNumber_StartTime,
         .hasIndex = 0,
         .offset = (uint32_t)offsetof(WordInfo__storage_, startTime),
@@ -1045,7 +1548,7 @@ typedef struct WordInfo__storage_ {
       },
       {
         .name = "endTime",
-        .dataTypeSpecific.className = GPBStringifySymbol(GPBTimestamp),
+        .dataTypeSpecific.className = GPBStringifySymbol(GPBDuration),
         .number = WordInfo_FieldNumber_EndTime,
         .hasIndex = 1,
         .offset = (uint32_t)offsetof(WordInfo__storage_, endTime),
@@ -1060,6 +1563,24 @@ typedef struct WordInfo__storage_ {
         .offset = (uint32_t)offsetof(WordInfo__storage_, word),
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "confidence",
+        .dataTypeSpecific.className = NULL,
+        .number = WordInfo_FieldNumber_Confidence,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(WordInfo__storage_, confidence),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeFloat,
+      },
+      {
+        .name = "speakerTag",
+        .dataTypeSpecific.className = NULL,
+        .number = WordInfo_FieldNumber_SpeakerTag,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(WordInfo__storage_, speakerTag),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeInt32,
       },
     };
     GPBDescriptor *localDescriptor =

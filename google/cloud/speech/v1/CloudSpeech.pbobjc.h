@@ -27,9 +27,11 @@
 
 CF_EXTERN_C_BEGIN
 
+@class GPBDuration;
 @class GPBTimestamp;
 @class RecognitionAudio;
 @class RecognitionConfig;
+@class RecognitionMetadata;
 @class SpeechContext;
 @class SpeechRecognitionAlternative;
 @class SpeechRecognitionResult;
@@ -43,16 +45,26 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Enum RecognitionConfig_AudioEncoding
 
 /**
- * Audio encoding of the data sent in the audio message. All encodings support
- * only 1 channel (mono) audio. Only `FLAC` includes a header that describes
- * the bytes of audio that follow the header. The other encodings are raw
- * audio bytes with no header.
+ * The encoding of the audio data sent in the request.
+ *
+ * All encodings support only 1 channel (mono) audio.
  *
  * For best results, the audio source should be captured and transmitted using
- * a lossless encoding (`FLAC` or `LINEAR16`). Recognition accuracy may be
- * reduced if lossy codecs, which include the other codecs listed in
- * this section, are used to capture or transmit the audio, particularly if
- * background noise is present.
+ * a lossless encoding (`FLAC` or `LINEAR16`). The accuracy of the speech
+ * recognition can be reduced if lossy codecs are used to capture or transmit
+ * audio, particularly if background noise is present. Lossy codecs include
+ * `MULAW`, `AMR`, `AMR_WB`, `OGG_OPUS`, and `SPEEX_WITH_HEADER_BYTE`.
+ *
+ * The `FLAC` and `WAV` audio file formats include a header that describes the
+ * included audio content. You can request recognition for `WAV` files that
+ * contain either `LINEAR16` or `MULAW` encoded audio.
+ * If you send `FLAC` or `WAV` audio file format in
+ * your request, you do not need to specify an `AudioEncoding`; the audio
+ * encoding format is determined from the file header. If you specify
+ * an `AudioEncoding` when you send  send `FLAC` or `WAV` audio, the
+ * encoding configuration must match the encoding described in the audio
+ * header; otherwise the request returns an
+ * [google.rpc.Code.INVALID_ARGUMENT][google.rpc.Code.INVALID_ARGUMENT] error code.
  **/
 typedef GPB_ENUM(RecognitionConfig_AudioEncoding) {
   /**
@@ -61,14 +73,14 @@ typedef GPB_ENUM(RecognitionConfig_AudioEncoding) {
    * of the field.
    **/
   RecognitionConfig_AudioEncoding_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
-  /** Not specified. Will return result [google.rpc.Code.INVALID_ARGUMENT][]. */
+  /** Not specified. */
   RecognitionConfig_AudioEncoding_EncodingUnspecified = 0,
 
   /** Uncompressed 16-bit signed little-endian samples (Linear PCM). */
   RecognitionConfig_AudioEncoding_Linear16 = 1,
 
   /**
-   * [`FLAC`](https://xiph.org/flac/documentation.html) (Free Lossless Audio
+   * `FLAC` (Free Lossless Audio
    * Codec) is the recommended encoding because it is
    * lossless--therefore recognition is not compromised--and
    * requires only about half the bandwidth of `LINEAR16`. `FLAC` stream
@@ -89,7 +101,7 @@ typedef GPB_ENUM(RecognitionConfig_AudioEncoding) {
   /**
    * Opus encoded audio frames in Ogg container
    * ([OggOpus](https://wiki.xiph.org/OggOpus)).
-   * `sample_rate_hertz` must be 16000.
+   * `sample_rate_hertz` must be one of 8000, 12000, 16000, 24000, or 48000.
    **/
   RecognitionConfig_AudioEncoding_OggOpus = 6,
 
@@ -118,6 +130,175 @@ GPBEnumDescriptor *RecognitionConfig_AudioEncoding_EnumDescriptor(void);
  * the time this source was generated.
  **/
 BOOL RecognitionConfig_AudioEncoding_IsValidValue(int32_t value);
+
+#pragma mark - Enum RecognitionMetadata_InteractionType
+
+/**
+ * Use case categories that the audio recognition request can be described
+ * by.
+ **/
+typedef GPB_ENUM(RecognitionMetadata_InteractionType) {
+  /**
+   * Value used if any message's field encounters a value that is not defined
+   * by this enum. The message will also have C functions to get/set the rawValue
+   * of the field.
+   **/
+  RecognitionMetadata_InteractionType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  /**
+   * Use case is either unknown or is something other than one of the other
+   * values below.
+   **/
+  RecognitionMetadata_InteractionType_InteractionTypeUnspecified = 0,
+
+  /**
+   * Multiple people in a conversation or discussion. For example in a
+   * meeting with two or more people actively participating. Typically
+   * all the primary people speaking would be in the same room (if not,
+   * see PHONE_CALL)
+   **/
+  RecognitionMetadata_InteractionType_Discussion = 1,
+
+  /**
+   * One or more persons lecturing or presenting to others, mostly
+   * uninterrupted.
+   **/
+  RecognitionMetadata_InteractionType_Presentation = 2,
+
+  /**
+   * A phone-call or video-conference in which two or more people, who are
+   * not in the same room, are actively participating.
+   **/
+  RecognitionMetadata_InteractionType_PhoneCall = 3,
+
+  /** A recorded message intended for another person to listen to. */
+  RecognitionMetadata_InteractionType_Voicemail = 4,
+
+  /** Professionally produced audio (eg. TV Show, Podcast). */
+  RecognitionMetadata_InteractionType_ProfessionallyProduced = 5,
+
+  /** Transcribe spoken questions and queries into text. */
+  RecognitionMetadata_InteractionType_VoiceSearch = 6,
+
+  /** Transcribe voice commands, such as for controlling a device. */
+  RecognitionMetadata_InteractionType_VoiceCommand = 7,
+
+  /**
+   * Transcribe speech to text to create a written document, such as a
+   * text-message, email or report.
+   **/
+  RecognitionMetadata_InteractionType_Dictation = 8,
+};
+
+GPBEnumDescriptor *RecognitionMetadata_InteractionType_EnumDescriptor(void);
+
+/**
+ * Checks to see if the given value is defined by the enum or was not known at
+ * the time this source was generated.
+ **/
+BOOL RecognitionMetadata_InteractionType_IsValidValue(int32_t value);
+
+#pragma mark - Enum RecognitionMetadata_MicrophoneDistance
+
+/** Enumerates the types of capture settings describing an audio file. */
+typedef GPB_ENUM(RecognitionMetadata_MicrophoneDistance) {
+  /**
+   * Value used if any message's field encounters a value that is not defined
+   * by this enum. The message will also have C functions to get/set the rawValue
+   * of the field.
+   **/
+  RecognitionMetadata_MicrophoneDistance_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  /** Audio type is not known. */
+  RecognitionMetadata_MicrophoneDistance_MicrophoneDistanceUnspecified = 0,
+
+  /**
+   * The audio was captured from a closely placed microphone. Eg. phone,
+   * dictaphone, or handheld microphone. Generally if there speaker is within
+   * 1 meter of the microphone.
+   **/
+  RecognitionMetadata_MicrophoneDistance_Nearfield = 1,
+
+  /** The speaker if within 3 meters of the microphone. */
+  RecognitionMetadata_MicrophoneDistance_Midfield = 2,
+
+  /** The speaker is more than 3 meters away from the microphone. */
+  RecognitionMetadata_MicrophoneDistance_Farfield = 3,
+};
+
+GPBEnumDescriptor *RecognitionMetadata_MicrophoneDistance_EnumDescriptor(void);
+
+/**
+ * Checks to see if the given value is defined by the enum or was not known at
+ * the time this source was generated.
+ **/
+BOOL RecognitionMetadata_MicrophoneDistance_IsValidValue(int32_t value);
+
+#pragma mark - Enum RecognitionMetadata_OriginalMediaType
+
+/** The original media the speech was recorded on. */
+typedef GPB_ENUM(RecognitionMetadata_OriginalMediaType) {
+  /**
+   * Value used if any message's field encounters a value that is not defined
+   * by this enum. The message will also have C functions to get/set the rawValue
+   * of the field.
+   **/
+  RecognitionMetadata_OriginalMediaType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  /** Unknown original media type. */
+  RecognitionMetadata_OriginalMediaType_OriginalMediaTypeUnspecified = 0,
+
+  /** The speech data is an audio recording. */
+  RecognitionMetadata_OriginalMediaType_Audio = 1,
+
+  /** The speech data originally recorded on a video. */
+  RecognitionMetadata_OriginalMediaType_Video = 2,
+};
+
+GPBEnumDescriptor *RecognitionMetadata_OriginalMediaType_EnumDescriptor(void);
+
+/**
+ * Checks to see if the given value is defined by the enum or was not known at
+ * the time this source was generated.
+ **/
+BOOL RecognitionMetadata_OriginalMediaType_IsValidValue(int32_t value);
+
+#pragma mark - Enum RecognitionMetadata_RecordingDeviceType
+
+/** The type of device the speech was recorded with. */
+typedef GPB_ENUM(RecognitionMetadata_RecordingDeviceType) {
+  /**
+   * Value used if any message's field encounters a value that is not defined
+   * by this enum. The message will also have C functions to get/set the rawValue
+   * of the field.
+   **/
+  RecognitionMetadata_RecordingDeviceType_GPBUnrecognizedEnumeratorValue = kGPBUnrecognizedEnumeratorValue,
+  /** The recording device is unknown. */
+  RecognitionMetadata_RecordingDeviceType_RecordingDeviceTypeUnspecified = 0,
+
+  /** Speech was recorded on a smartphone. */
+  RecognitionMetadata_RecordingDeviceType_Smartphone = 1,
+
+  /** Speech was recorded using a personal computer or tablet. */
+  RecognitionMetadata_RecordingDeviceType_Pc = 2,
+
+  /** Speech was recorded over a phone line. */
+  RecognitionMetadata_RecordingDeviceType_PhoneLine = 3,
+
+  /** Speech was recorded in a vehicle. */
+  RecognitionMetadata_RecordingDeviceType_Vehicle = 4,
+
+  /** Speech was recorded outdoors. */
+  RecognitionMetadata_RecordingDeviceType_OtherOutdoorDevice = 5,
+
+  /** Speech was recorded indoors. */
+  RecognitionMetadata_RecordingDeviceType_OtherIndoorDevice = 6,
+};
+
+GPBEnumDescriptor *RecognitionMetadata_RecordingDeviceType_EnumDescriptor(void);
+
+/**
+ * Checks to see if the given value is defined by the enum or was not known at
+ * the time this source was generated.
+ **/
+BOOL RecognitionMetadata_RecordingDeviceType_IsValidValue(int32_t value);
 
 #pragma mark - Enum StreamingRecognizeResponse_SpeechEventType
 
@@ -244,6 +425,7 @@ typedef GPB_ENUM(StreamingRecognizeRequest_StreamingRequest_OneOfCase) {
  **/
 @interface StreamingRecognizeRequest : GPBMessage
 
+/** The streaming request, which is either a streaming config or audio content. */
 @property(nonatomic, readonly) StreamingRecognizeRequest_StreamingRequest_OneOfCase streamingRequestOneOfCase;
 
 /**
@@ -328,7 +510,17 @@ typedef GPB_ENUM(RecognitionConfig_FieldNumber) {
   RecognitionConfig_FieldNumber_MaxAlternatives = 4,
   RecognitionConfig_FieldNumber_ProfanityFilter = 5,
   RecognitionConfig_FieldNumber_SpeechContextsArray = 6,
+  RecognitionConfig_FieldNumber_AudioChannelCount = 7,
   RecognitionConfig_FieldNumber_EnableWordTimeOffsets = 8,
+  RecognitionConfig_FieldNumber_Metadata = 9,
+  RecognitionConfig_FieldNumber_EnableAutomaticPunctuation = 11,
+  RecognitionConfig_FieldNumber_EnableSeparateRecognitionPerChannel = 12,
+  RecognitionConfig_FieldNumber_Model = 13,
+  RecognitionConfig_FieldNumber_UseEnhanced = 14,
+  RecognitionConfig_FieldNumber_EnableWordConfidence = 15,
+  RecognitionConfig_FieldNumber_EnableSpeakerDiarization = 16,
+  RecognitionConfig_FieldNumber_DiarizationSpeakerCount = 17,
+  RecognitionConfig_FieldNumber_AlternativeLanguageCodesArray = 18,
 };
 
 /**
@@ -337,17 +529,46 @@ typedef GPB_ENUM(RecognitionConfig_FieldNumber) {
  **/
 @interface RecognitionConfig : GPBMessage
 
-/** *Required* Encoding of audio data sent in all `RecognitionAudio` messages. */
+/**
+ * Encoding of audio data sent in all `RecognitionAudio` messages.
+ * This field is optional for `FLAC` and `WAV` audio files and required
+ * for all other audio formats. For details, see [AudioEncoding][google.cloud.speech.v1p1beta1.RecognitionConfig.AudioEncoding].
+ **/
 @property(nonatomic, readwrite) RecognitionConfig_AudioEncoding encoding;
 
 /**
- * *Required* Sample rate in Hertz of the audio data sent in all
+ * Sample rate in Hertz of the audio data sent in all
  * `RecognitionAudio` messages. Valid values are: 8000-48000.
  * 16000 is optimal. For best results, set the sampling rate of the audio
  * source to 16000 Hz. If that's not possible, use the native sample rate of
  * the audio source (instead of re-sampling).
+ * This field is optional for `FLAC` and `WAV` audio files and required
+ * for all other audio formats. For details, see [AudioEncoding][google.cloud.speech.v1p1beta1.RecognitionConfig.AudioEncoding].
  **/
 @property(nonatomic, readwrite) int32_t sampleRateHertz;
+
+/**
+ * *Optional* The number of channels in the input audio data.
+ * ONLY set this for MULTI-CHANNEL recognition.
+ * Valid values for LINEAR16 and FLAC are `1`-`8`.
+ * Valid values for OGG_OPUS are '1'-'254'.
+ * Valid value for MULAW, AMR, AMR_WB and SPEEX_WITH_HEADER_BYTE is only `1`.
+ * If `0` or omitted, defaults to one channel (mono).
+ * NOTE: We only recognize the first channel by default.
+ * To perform independent recognition on each channel set
+ * enable_separate_recognition_per_channel to 'true'.
+ **/
+@property(nonatomic, readwrite) int32_t audioChannelCount;
+
+/**
+ * This needs to be set to ‘true’ explicitly and audio_channel_count > 1
+ * to get each channel recognized separately. The recognition result will
+ * contain a channel_tag field to state which channel that result belongs to.
+ * If this is not ‘true’, we will only recognize the first channel.
+ * NOTE: The request is also billed cumulatively for all channels recognized:
+ *     (audio_channel_count times the audio length)
+ **/
+@property(nonatomic, readwrite) BOOL enableSeparateRecognitionPerChannel;
 
 /**
  * *Required* The language of the supplied audio as a
@@ -357,6 +578,24 @@ typedef GPB_ENUM(RecognitionConfig_FieldNumber) {
  * for a list of the currently supported language codes.
  **/
 @property(nonatomic, readwrite, copy, null_resettable) NSString *languageCode;
+
+/**
+ * *Optional* A list of up to 3 additional
+ * [BCP-47](https://www.rfc-editor.org/rfc/bcp/bcp47.txt) language tags,
+ * listing possible alternative languages of the supplied audio.
+ * See [Language Support](https://cloud.google.com/speech/docs/languages)
+ * for a list of the currently supported language codes.
+ * If alternative languages are listed, recognition result will contain
+ * recognition in the most likely language detected including the main
+ * language_code. The recognition result will include the language tag
+ * of the language detected in the audio.
+ * NOTE: This feature is only supported for Voice Command and Voice Search
+ * use cases and performance may vary for other use cases (e.g., phone call
+ * transcription).
+ **/
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *alternativeLanguageCodesArray;
+/** The number of items in @c alternativeLanguageCodesArray without causing the array to be created. */
+@property(nonatomic, readonly) NSUInteger alternativeLanguageCodesArray_Count;
 
 /**
  * *Optional* Maximum number of recognition hypotheses to be returned.
@@ -382,12 +621,105 @@ typedef GPB_ENUM(RecognitionConfig_FieldNumber) {
 @property(nonatomic, readonly) NSUInteger speechContextsArray_Count;
 
 /**
- * *Optional* If ``true``, the top result includes a list of
- * words and the start and end time offsets (timestamps) for
- * those words. If ``false``, no word-level time offset
- * information is returned. The default is ``false``.
+ * *Optional* If `true`, the top result includes a list of words and
+ * the start and end time offsets (timestamps) for those words. If
+ * `false`, no word-level time offset information is returned. The default is
+ * `false`.
  **/
 @property(nonatomic, readwrite) BOOL enableWordTimeOffsets;
+
+/**
+ * *Optional* If `true`, the top result includes a list of words and the
+ * confidence for those words. If `false`, no word-level confidence
+ * information is returned. The default is `false`.
+ **/
+@property(nonatomic, readwrite) BOOL enableWordConfidence;
+
+/**
+ * *Optional* If 'true', adds punctuation to recognition result hypotheses.
+ * This feature is only available in select languages. Setting this for
+ * requests in other languages has no effect at all.
+ * The default 'false' value does not add punctuation to result hypotheses.
+ * NOTE: "This is currently offered as an experimental service, complimentary
+ * to all users. In the future this may be exclusively available as a
+ * premium feature."
+ **/
+@property(nonatomic, readwrite) BOOL enableAutomaticPunctuation;
+
+/**
+ * *Optional* If 'true', enables speaker detection for each recognized word in
+ * the top alternative of the recognition result using a speaker_tag provided
+ * in the WordInfo.
+ * Note: When this is true, we send all the words from the beginning of the
+ * audio for the top alternative in every consecutive responses.
+ * This is done in order to improve our speaker tags as our models learn to
+ * identify the speakers in the conversation over time.
+ **/
+@property(nonatomic, readwrite) BOOL enableSpeakerDiarization;
+
+/**
+ * *Optional*
+ * If set, specifies the estimated number of speakers in the conversation.
+ * If not set, defaults to '2'.
+ * Ignored unless enable_speaker_diarization is set to true."
+ **/
+@property(nonatomic, readwrite) int32_t diarizationSpeakerCount;
+
+/** *Optional* Metadata regarding this request. */
+@property(nonatomic, readwrite, strong, null_resettable) RecognitionMetadata *metadata;
+/** Test to see if @c metadata has been set. */
+@property(nonatomic, readwrite) BOOL hasMetadata;
+
+/**
+ * *Optional* Which model to select for the given request. Select the model
+ * best suited to your domain to get best results. If a model is not
+ * explicitly specified, then we auto-select a model based on the parameters
+ * in the RecognitionConfig.
+ * <table>
+ *   <tr>
+ *     <td><b>Model</b></td>
+ *     <td><b>Description</b></td>
+ *   </tr>
+ *   <tr>
+ *     <td><code>command_and_search</code></td>
+ *     <td>Best for short queries such as voice commands or voice search.</td>
+ *   </tr>
+ *   <tr>
+ *     <td><code>phone_call</code></td>
+ *     <td>Best for audio that originated from a phone call (typically
+ *     recorded at an 8khz sampling rate).</td>
+ *   </tr>
+ *   <tr>
+ *     <td><code>video</code></td>
+ *     <td>Best for audio that originated from from video or includes multiple
+ *         speakers. Ideally the audio is recorded at a 16khz or greater
+ *         sampling rate. This is a premium model that costs more than the
+ *         standard rate.</td>
+ *   </tr>
+ *   <tr>
+ *     <td><code>default</code></td>
+ *     <td>Best for audio that is not one of the specific audio models.
+ *         For example, long-form audio. Ideally the audio is high-fidelity,
+ *         recorded at a 16khz or greater sampling rate.</td>
+ *   </tr>
+ * </table>
+ **/
+@property(nonatomic, readwrite, copy, null_resettable) NSString *model;
+
+/**
+ * *Optional* Set to true to use an enhanced model for speech recognition.
+ * You must also set the `model` field to a valid, enhanced model. If
+ * `use_enhanced` is set to true and the `model` field is not set, then
+ * `use_enhanced` is ignored. If `use_enhanced` is true and an enhanced
+ * version of the specified model does not exist, then the speech is
+ * recognized using the standard version of the specified model.
+ *
+ * Enhanced speech models require that you opt-in to the audio logging using
+ * instructions in the [alpha documentation](/speech/data-sharing). If you set
+ * `use_enhanced` to true and you have not enabled audio logging, then you
+ * will receive an error.
+ **/
+@property(nonatomic, readwrite) BOOL useEnhanced;
 
 @end
 
@@ -402,6 +734,122 @@ int32_t RecognitionConfig_Encoding_RawValue(RecognitionConfig *message);
  * was generated.
  **/
 void SetRecognitionConfig_Encoding_RawValue(RecognitionConfig *message, int32_t value);
+
+#pragma mark - RecognitionMetadata
+
+typedef GPB_ENUM(RecognitionMetadata_FieldNumber) {
+  RecognitionMetadata_FieldNumber_InteractionType = 1,
+  RecognitionMetadata_FieldNumber_IndustryNaicsCodeOfAudio = 3,
+  RecognitionMetadata_FieldNumber_MicrophoneDistance = 4,
+  RecognitionMetadata_FieldNumber_OriginalMediaType = 5,
+  RecognitionMetadata_FieldNumber_RecordingDeviceType = 6,
+  RecognitionMetadata_FieldNumber_RecordingDeviceName = 7,
+  RecognitionMetadata_FieldNumber_OriginalMimeType = 8,
+  RecognitionMetadata_FieldNumber_ObfuscatedId = 9,
+  RecognitionMetadata_FieldNumber_AudioTopic = 10,
+};
+
+/**
+ * Description of audio data to be recognized.
+ **/
+@interface RecognitionMetadata : GPBMessage
+
+/** The use case most closely describing the audio content to be recognized. */
+@property(nonatomic, readwrite) RecognitionMetadata_InteractionType interactionType;
+
+/**
+ * The industry vertical to which this speech recognition request most
+ * closely applies. This is most indicative of the topics contained
+ * in the audio.  Use the 6-digit NAICS code to identify the industry
+ * vertical - see https://www.naics.com/search/.
+ **/
+@property(nonatomic, readwrite) uint32_t industryNaicsCodeOfAudio;
+
+/** The audio type that most closely describes the audio being recognized. */
+@property(nonatomic, readwrite) RecognitionMetadata_MicrophoneDistance microphoneDistance;
+
+/** The original media the speech was recorded on. */
+@property(nonatomic, readwrite) RecognitionMetadata_OriginalMediaType originalMediaType;
+
+/** The type of device the speech was recorded with. */
+@property(nonatomic, readwrite) RecognitionMetadata_RecordingDeviceType recordingDeviceType;
+
+/**
+ * The device used to make the recording.  Examples 'Nexus 5X' or
+ * 'Polycom SoundStation IP 6000' or 'POTS' or 'VoIP' or
+ * 'Cardioid Microphone'.
+ **/
+@property(nonatomic, readwrite, copy, null_resettable) NSString *recordingDeviceName;
+
+/**
+ * Mime type of the original audio file.  For example `audio/m4a`,
+ * `audio/x-alaw-basic`, `audio/mp3`, `audio/3gpp`.
+ * A list of possible audio mime types is maintained at
+ * http://www.iana.org/assignments/media-types/media-types.xhtml#audio
+ **/
+@property(nonatomic, readwrite, copy, null_resettable) NSString *originalMimeType;
+
+/**
+ * Obfuscated (privacy-protected) ID of the user, to identify number of
+ * unique users using the service.
+ **/
+@property(nonatomic, readwrite) int64_t obfuscatedId;
+
+/**
+ * Description of the content. Eg. "Recordings of federal supreme court
+ * hearings from 2012".
+ **/
+@property(nonatomic, readwrite, copy, null_resettable) NSString *audioTopic;
+
+@end
+
+/**
+ * Fetches the raw value of a @c RecognitionMetadata's @c interactionType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RecognitionMetadata_InteractionType_RawValue(RecognitionMetadata *message);
+/**
+ * Sets the raw value of an @c RecognitionMetadata's @c interactionType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRecognitionMetadata_InteractionType_RawValue(RecognitionMetadata *message, int32_t value);
+
+/**
+ * Fetches the raw value of a @c RecognitionMetadata's @c microphoneDistance property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RecognitionMetadata_MicrophoneDistance_RawValue(RecognitionMetadata *message);
+/**
+ * Sets the raw value of an @c RecognitionMetadata's @c microphoneDistance property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRecognitionMetadata_MicrophoneDistance_RawValue(RecognitionMetadata *message, int32_t value);
+
+/**
+ * Fetches the raw value of a @c RecognitionMetadata's @c originalMediaType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RecognitionMetadata_OriginalMediaType_RawValue(RecognitionMetadata *message);
+/**
+ * Sets the raw value of an @c RecognitionMetadata's @c originalMediaType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRecognitionMetadata_OriginalMediaType_RawValue(RecognitionMetadata *message, int32_t value);
+
+/**
+ * Fetches the raw value of a @c RecognitionMetadata's @c recordingDeviceType property, even
+ * if the value was not defined by the enum at the time the code was generated.
+ **/
+int32_t RecognitionMetadata_RecordingDeviceType_RawValue(RecognitionMetadata *message);
+/**
+ * Sets the raw value of an @c RecognitionMetadata's @c recordingDeviceType property, allowing
+ * it to be set to a value that was not defined by the enum at the time the code
+ * was generated.
+ **/
+void SetRecognitionMetadata_RecordingDeviceType_RawValue(RecognitionMetadata *message, int32_t value);
 
 #pragma mark - SpeechContext
 
@@ -445,11 +893,15 @@ typedef GPB_ENUM(RecognitionAudio_AudioSource_OneOfCase) {
 /**
  * Contains audio data in the encoding specified in the `RecognitionConfig`.
  * Either `content` or `uri` must be supplied. Supplying both or neither
- * returns [google.rpc.Code.INVALID_ARGUMENT][]. See
+ * returns [google.rpc.Code.INVALID_ARGUMENT][google.rpc.Code.INVALID_ARGUMENT]. See
  * [audio limits](https://cloud.google.com/speech/limits#content).
  **/
 @interface RecognitionAudio : GPBMessage
 
+/**
+ * The audio source, which is either inline content or a Google Cloud
+ * Storage uri.
+ **/
 @property(nonatomic, readonly) RecognitionAudio_AudioSource_OneOfCase audioSourceOneOfCase;
 
 /**
@@ -464,7 +916,7 @@ typedef GPB_ENUM(RecognitionAudio_AudioSource_OneOfCase) {
  * `RecognitionConfig`. Currently, only Google Cloud Storage URIs are
  * supported, which must be specified in the following format:
  * `gs://bucket_name/object_name` (other URI formats return
- * [google.rpc.Code.INVALID_ARGUMENT][]). For more information, see
+ * [google.rpc.Code.INVALID_ARGUMENT][google.rpc.Code.INVALID_ARGUMENT]). For more information, see
  * [Request URIs](https://cloud.google.com/storage/docs/reference-uris).
  **/
 @property(nonatomic, readwrite, copy, null_resettable) NSString *uri;
@@ -490,7 +942,7 @@ typedef GPB_ENUM(RecognizeResponse_FieldNumber) {
 @interface RecognizeResponse : GPBMessage
 
 /**
- * *Output-only* Sequential list of transcription results corresponding to
+ * Output only. Sequential list of transcription results corresponding to
  * sequential portions of audio.
  **/
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<SpeechRecognitionResult*> *resultsArray;
@@ -515,7 +967,7 @@ typedef GPB_ENUM(LongRunningRecognizeResponse_FieldNumber) {
 @interface LongRunningRecognizeResponse : GPBMessage
 
 /**
- * *Output-only* Sequential list of transcription results corresponding to
+ * Output only. Sequential list of transcription results corresponding to
  * sequential portions of audio.
  **/
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<SpeechRecognitionResult*> *resultsArray;
@@ -567,8 +1019,10 @@ typedef GPB_ENUM(StreamingRecognizeResponse_FieldNumber) {
 
 /**
  * `StreamingRecognizeResponse` is the only message returned to the client by
- * `StreamingRecognize`. A series of one or more `StreamingRecognizeResponse`
- * messages are streamed back to the client.
+ * `StreamingRecognize`. A series of zero or more `StreamingRecognizeResponse`
+ * messages are streamed back to the client. If there is no recognizable
+ * audio, and `single_utterance` is set to false, then no messages are streamed
+ * back to the client.
  *
  * Here's an example of a series of ten `StreamingRecognizeResponse`s that might
  * be returned while processing audio:
@@ -590,16 +1044,14 @@ typedef GPB_ENUM(StreamingRecognizeResponse_FieldNumber) {
  * 6. results { alternatives { transcript: " that is" } stability: 0.9 }
  *    results { alternatives { transcript: " the question" } stability: 0.01 }
  *
- * 7. speech_event_type: END_OF_SINGLE_UTTERANCE
- *
- * 8. results { alternatives { transcript: " that is the question"
+ * 7. results { alternatives { transcript: " that is the question"
  *                             confidence: 0.98 }
  *              alternatives { transcript: " that was the question" }
  *              is_final: true }
  *
  * Notes:
  *
- * - Only two of the above responses #4 and #8 contain final results; they are
+ * - Only two of the above responses #4 and #7 contain final results; they are
  *   indicated by `is_final: true`. Concatenating these together generates the
  *   full transcript: "to be or not to be that is the question".
  *
@@ -619,7 +1071,7 @@ typedef GPB_ENUM(StreamingRecognizeResponse_FieldNumber) {
 @interface StreamingRecognizeResponse : GPBMessage
 
 /**
- * *Output-only* If set, returns a [google.rpc.Status][] message that
+ * Output only. If set, returns a [google.rpc.Status][google.rpc.Status] message that
  * specifies the error for the operation.
  **/
 @property(nonatomic, readwrite, strong, null_resettable) Status *error;
@@ -627,16 +1079,16 @@ typedef GPB_ENUM(StreamingRecognizeResponse_FieldNumber) {
 @property(nonatomic, readwrite) BOOL hasError;
 
 /**
- * *Output-only* This repeated list contains zero or more results that
+ * Output only. This repeated list contains zero or more results that
  * correspond to consecutive portions of the audio currently being processed.
  * It contains zero or one `is_final=true` result (the newly settled portion),
- * followed by zero or more `is_final=false` results.
+ * followed by zero or more `is_final=false` results (the interim results).
  **/
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<StreamingRecognitionResult*> *resultsArray;
 /** The number of items in @c resultsArray without causing the array to be created. */
 @property(nonatomic, readonly) NSUInteger resultsArray_Count;
 
-/** *Output-only* Indicates the type of speech event. */
+/** Output only. Indicates the type of speech event. */
 @property(nonatomic, readwrite) StreamingRecognizeResponse_SpeechEventType speechEventType;
 
 @end
@@ -659,6 +1111,8 @@ typedef GPB_ENUM(StreamingRecognitionResult_FieldNumber) {
   StreamingRecognitionResult_FieldNumber_AlternativesArray = 1,
   StreamingRecognitionResult_FieldNumber_IsFinal = 2,
   StreamingRecognitionResult_FieldNumber_Stability = 3,
+  StreamingRecognitionResult_FieldNumber_ChannelTag = 5,
+  StreamingRecognitionResult_FieldNumber_LanguageCode = 6,
 };
 
 /**
@@ -668,15 +1122,17 @@ typedef GPB_ENUM(StreamingRecognitionResult_FieldNumber) {
 @interface StreamingRecognitionResult : GPBMessage
 
 /**
- * *Output-only* May contain one or more recognition hypotheses (up to the
+ * Output only. May contain one or more recognition hypotheses (up to the
  * maximum specified in `max_alternatives`).
+ * These alternatives are ordered in terms of accuracy, with the top (first)
+ * alternative being the most probable, as ranked by the recognizer.
  **/
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<SpeechRecognitionAlternative*> *alternativesArray;
 /** The number of items in @c alternativesArray without causing the array to be created. */
 @property(nonatomic, readonly) NSUInteger alternativesArray_Count;
 
 /**
- * *Output-only* If `false`, this `StreamingRecognitionResult` represents an
+ * Output only. If `false`, this `StreamingRecognitionResult` represents an
  * interim result that may change. If `true`, this is the final time the
  * speech service will return this particular `StreamingRecognitionResult`,
  * the recognizer will not return any further hypotheses for this portion of
@@ -685,7 +1141,7 @@ typedef GPB_ENUM(StreamingRecognitionResult_FieldNumber) {
 @property(nonatomic, readwrite) BOOL isFinal;
 
 /**
- * *Output-only* An estimate of the likelihood that the recognizer will not
+ * Output only. An estimate of the likelihood that the recognizer will not
  * change its guess about this interim result. Values range from 0.0
  * (completely unstable) to 1.0 (completely stable).
  * This field is only provided for interim results (`is_final=false`).
@@ -693,12 +1149,29 @@ typedef GPB_ENUM(StreamingRecognitionResult_FieldNumber) {
  **/
 @property(nonatomic, readwrite) float stability;
 
+/**
+ * For multi-channel audio, this is the channel number corresponding to the
+ * recognized result for the audio from that channel.
+ * For audio_channel_count = N, its output values can range from '1' to 'N'.
+ **/
+@property(nonatomic, readwrite) int32_t channelTag;
+
+/**
+ * Output only. The
+ * [BCP-47](https://www.rfc-editor.org/rfc/bcp/bcp47.txt) language tag of the
+ * language in this result. This language code was detected to have the most
+ * likelihood of being spoken in the audio.
+ **/
+@property(nonatomic, readwrite, copy, null_resettable) NSString *languageCode;
+
 @end
 
 #pragma mark - SpeechRecognitionResult
 
 typedef GPB_ENUM(SpeechRecognitionResult_FieldNumber) {
   SpeechRecognitionResult_FieldNumber_AlternativesArray = 1,
+  SpeechRecognitionResult_FieldNumber_ChannelTag = 2,
+  SpeechRecognitionResult_FieldNumber_LanguageCode = 5,
 };
 
 /**
@@ -707,12 +1180,29 @@ typedef GPB_ENUM(SpeechRecognitionResult_FieldNumber) {
 @interface SpeechRecognitionResult : GPBMessage
 
 /**
- * *Output-only* May contain one or more recognition hypotheses (up to the
+ * Output only. May contain one or more recognition hypotheses (up to the
  * maximum specified in `max_alternatives`).
+ * These alternatives are ordered in terms of accuracy, with the top (first)
+ * alternative being the most probable, as ranked by the recognizer.
  **/
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<SpeechRecognitionAlternative*> *alternativesArray;
 /** The number of items in @c alternativesArray without causing the array to be created. */
 @property(nonatomic, readonly) NSUInteger alternativesArray_Count;
+
+/**
+ * For multi-channel audio, this is the channel number corresponding to the
+ * recognized result for the audio from that channel.
+ * For audio_channel_count = N, its output values can range from '1' to 'N'.
+ **/
+@property(nonatomic, readwrite) int32_t channelTag;
+
+/**
+ * Output only. The
+ * [BCP-47](https://www.rfc-editor.org/rfc/bcp/bcp47.txt) language tag of the
+ * language in this result. This language code was detected to have the most
+ * likelihood of being spoken in the audio.
+ **/
+@property(nonatomic, readwrite, copy, null_resettable) NSString *languageCode;
 
 @end
 
@@ -729,23 +1219,24 @@ typedef GPB_ENUM(SpeechRecognitionAlternative_FieldNumber) {
  **/
 @interface SpeechRecognitionAlternative : GPBMessage
 
-/** *Output-only* Transcript text representing the words that the user spoke. */
+/** Output only. Transcript text representing the words that the user spoke. */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *transcript;
 
 /**
- * *Output-only* The confidence estimate between 0.0 and 1.0. A higher number
+ * Output only. The confidence estimate between 0.0 and 1.0. A higher number
  * indicates an estimated greater likelihood that the recognized words are
- * correct. This field is typically provided only for the top hypothesis, and
- * only for `is_final=true` results. Clients should not rely on the
- * `confidence` field as it is not guaranteed to be accurate, or even set, in
- * any of the results.
+ * correct. This field is set only for the top alternative of a non-streaming
+ * result or, of a streaming result where `is_final=true`.
+ * This field is not guaranteed to be accurate and users should not rely on it
+ * to be always provided.
  * The default of 0.0 is a sentinel value indicating `confidence` was not set.
  **/
 @property(nonatomic, readwrite) float confidence;
 
 /**
- * *Output-only* A list of word-specific information for each
- * recognized word.
+ * Output only. A list of word-specific information for each recognized word.
+ * Note: When enable_speaker_diarization is true, you will see all the words
+ * from the beginning of the audio.
  **/
 @property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<WordInfo*> *wordsArray;
 /** The number of items in @c wordsArray without causing the array to be created. */
@@ -759,37 +1250,61 @@ typedef GPB_ENUM(WordInfo_FieldNumber) {
   WordInfo_FieldNumber_StartTime = 1,
   WordInfo_FieldNumber_EndTime = 2,
   WordInfo_FieldNumber_Word = 3,
+  WordInfo_FieldNumber_Confidence = 4,
+  WordInfo_FieldNumber_SpeakerTag = 5,
 };
 
+/**
+ * Word-specific information for recognized words.
+ **/
 @interface WordInfo : GPBMessage
 
 /**
- * *Output-only* Time offset relative to the beginning of the
- * audio, and corresponding to the start of the spoken word. This
- * field is only set if ``enable_word_time_offsets=true`` and
- * only in the top hypothesis. This is an experimental feature
- * and the accuracy of the time offset can vary.
+ * Output only. Time offset relative to the beginning of the audio,
+ * and corresponding to the start of the spoken word.
+ * This field is only set if `enable_word_time_offsets=true` and only
+ * in the top hypothesis.
+ * This is an experimental feature and the accuracy of the time offset can
+ * vary.
  **/
-@property(nonatomic, readwrite, strong, null_resettable) GPBTimestamp *startTime;
+@property(nonatomic, readwrite, strong, null_resettable) GPBDuration *startTime;
 /** Test to see if @c startTime has been set. */
 @property(nonatomic, readwrite) BOOL hasStartTime;
 
 /**
- * *Output-only* Time offset relative to the beginning of the
- * audio, and corresponding to the end of the spoken word. This
- * field is only set if ``enable_word_time_offsets=true`` and
- * only in the top hypothesis. This is an experimental feature
- * and the accuracy of the time offset can vary.
+ * Output only. Time offset relative to the beginning of the audio,
+ * and corresponding to the end of the spoken word.
+ * This field is only set if `enable_word_time_offsets=true` and only
+ * in the top hypothesis.
+ * This is an experimental feature and the accuracy of the time offset can
+ * vary.
  **/
-@property(nonatomic, readwrite, strong, null_resettable) GPBTimestamp *endTime;
+@property(nonatomic, readwrite, strong, null_resettable) GPBDuration *endTime;
 /** Test to see if @c endTime has been set. */
 @property(nonatomic, readwrite) BOOL hasEndTime;
 
-/**
- * *Output-only* The word corresponding to this set of
- * information.
- **/
+/** Output only. The word corresponding to this set of information. */
 @property(nonatomic, readwrite, copy, null_resettable) NSString *word;
+
+/**
+ * Output only. The confidence estimate between 0.0 and 1.0. A higher number
+ * indicates an estimated greater likelihood that the recognized words are
+ * correct. This field is set only for the top alternative of a non-streaming
+ * result or, of a streaming result where `is_final=true`.
+ * This field is not guaranteed to be accurate and users should not rely on it
+ * to be always provided.
+ * The default of 0.0 is a sentinel value indicating `confidence` was not set.
+ **/
+@property(nonatomic, readwrite) float confidence;
+
+/**
+ * Output only. A distinct integer value is assigned for every speaker within
+ * the audio. This field specifies which one of those speakers was detected to
+ * have spoken this word. Value ranges from '1' to diarization_speaker_count.
+ * speaker_tag is set if enable_speaker_diarization = 'true' and only in the
+ * top alternative.
+ **/
+@property(nonatomic, readwrite) int32_t speakerTag;
 
 @end
 

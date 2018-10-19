@@ -75,7 +75,7 @@ typedef GPB_ENUM(HttpRule_Pattern_OneOfCase) {
  * REST APIs.  The mapping determines what portions of the request
  * message are populated from the path, query parameters, or body of
  * the HTTP request.  The mapping is typically specified as an
- * `google.api.http` annotation, see "google/api/annotations.proto"
+ * `google.api.http` annotation, see <googleapis/annotations.proto"
  * for details.
  *
  * The mapping consists of a field specifying the path template and

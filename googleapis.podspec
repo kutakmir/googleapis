@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
   s.name     = 'googleapis'
-  s.version  = '1.0.0'
+  s.version  = '0.0.1'
   s.license  = 'Apache 2.0'
   s.authors  = { 'Google Inc.' => 'timburks@google.com'}
   s.homepage = 'http://github.com/GoogleCloudPlatform/ios-docs-samples'
-  s.source   = { :git => 'https://github.com/kutakmir/googleapis',
-                 :tag => '1.0.0' }
+  s.source   = { :git => 'https://github.com/GoogleCloudPlatform/ios-docs-samples.git',
+                 :tag => '0.0.1' }
   s.summary  = 'Service definitions for Google Cloud Platform APIs'	  
 
   s.ios.deployment_target = '7.1'
@@ -21,11 +21,12 @@ Pod::Spec.new do |s|
   protoc_dir = "#{pods_root}/!ProtoCompiler"
   protoc = "#{protoc_dir}/protoc"
   plugin = "#{pods_root}/!ProtoCompiler-gRPCPlugin/grpc_objective_c_plugin"
-  
+
   # Run protoc with the Objective-C and gRPC plugins to generate protocol messages and gRPC clients.
   # You can run this command manually if you later change your protos and need to regenerate.  
   s.prepare_command = <<-CMD
     #{protoc} \
+        --objc_opt=named_framework_to_proto_path_mappings_path=./protomap \
         --plugin=protoc-gen-grpc=#{plugin} \
         --objc_out=. \
         --grpc_out=. \
